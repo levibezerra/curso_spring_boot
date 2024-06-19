@@ -4,6 +4,7 @@ import com.levi.demo_park_api.entity.Usuario;
 import com.levi.demo_park_api.service.UsuarioService;
 import com.levi.demo_park_api.web.dto.UsuarioCreateDto;
 import com.levi.demo_park_api.web.dto.UsuarioResponseDto;
+import com.levi.demo_park_api.web.dto.UsuarioSenhaDto;
 import com.levi.demo_park_api.web.dto.mapper.UsuarioMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -33,9 +34,9 @@ public class UsuarioController{
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Usuario> updatePassword(@PathVariable Long id, @RequestBody Usuario usuario) {
-        Usuario user = usuarioService.editarSenha(id, usuario.getPassword());
-        return ResponseEntity.ok(user);
+    public ResponseEntity<Void> updatePassword(@PathVariable Long id, @RequestBody UsuarioSenhaDto dto) {
+        Usuario user = usuarioService.editarSenha(id, dto.getSenhaAtual(), dto.getNovaSenha(), dto.getConfirmaSenha());
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping
