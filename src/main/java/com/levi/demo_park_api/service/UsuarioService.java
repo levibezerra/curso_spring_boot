@@ -2,6 +2,7 @@ package com.levi.demo_park_api.service;
 
 import com.levi.demo_park_api.entity.Usuario;
 import com.levi.demo_park_api.exception.EntityNotFoundException;
+import com.levi.demo_park_api.exception.PasswordInvalidException;
 import com.levi.demo_park_api.exception.UsernameUniqueViolationException;
 import com.levi.demo_park_api.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
@@ -36,12 +37,12 @@ public class UsuarioService {
     @Transactional
     public Usuario editarSenha(Long id, String senhaAtual, String novaSenha, String confirmaSenha) {
         if(!novaSenha.equals(confirmaSenha)) {
-            throw new RuntimeException("Nova senha não confere com confirmação senha!.");
+            throw new PasswordInvalidException("Nova senha não confere com confirmação senha!.");
         }
 
         Usuario user = buscarPorId(id);
         if(!user.getPassword().equals(senhaAtual)) {
-            throw new RuntimeException("Sua senha não confere!.");
+            throw new PasswordInvalidException("Sua senha não confere!.");
         }
         user.setPassword(novaSenha);
         return user;
