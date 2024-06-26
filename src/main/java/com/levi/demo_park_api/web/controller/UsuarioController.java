@@ -8,6 +8,7 @@ import com.levi.demo_park_api.web.dto.UsuarioSenhaDto;
 import com.levi.demo_park_api.web.dto.mapper.UsuarioMapper;
 import com.levi.demo_park_api.web.exception.ErrorMessage;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -80,10 +81,11 @@ public class UsuarioController{
         return ResponseEntity.noContent().build();
     }
 
-    @Operation(summary = "Recuperar todos os usuários", description = "Recuperar todos os usuários",
+    @Operation(summary = "Listar todos os usuários", description = "Listar todos os usuários cadastrados",
             responses = {
-                     @ApiResponse(responseCode = "200", description = "Lista de usuário recuperada com sucesso",
-                              content = @Content(mediaType = "application/json", schema = @Schema(implementation = UsuarioResponseDto.class)))
+                     @ApiResponse(responseCode = "200", description = "Lista com todos usuários cadastrados",
+                              content = @Content(mediaType = "application/json",
+                              array = @ArraySchema(schema = @Schema(implementation = UsuarioResponseDto.class))))
             })
 
     @GetMapping
