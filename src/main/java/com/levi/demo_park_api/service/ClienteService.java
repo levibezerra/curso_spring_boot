@@ -6,8 +6,12 @@ import com.levi.demo_park_api.exception.EntityNotFoundException;
 import com.levi.demo_park_api.repository.ClienteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -30,5 +34,10 @@ public class ClienteService {
         return clienteRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException(String.format("Cliente id=%s não encontrado no sistema", id))
         );
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Cliente> buscarTodos(Pageable pageable) {
+        return clienteRepository.findAll(pageable);
     }
 }
