@@ -2,12 +2,15 @@ package com.levi.demo_park_api.web.controller;
 
 import com.levi.demo_park_api.entity.Cliente;
 import com.levi.demo_park_api.jwt.JwtUserDetails;
+import com.levi.demo_park_api.repository.projection.ClienteProjection;
 import com.levi.demo_park_api.service.ClienteService;
 import com.levi.demo_park_api.service.UsuarioService;
 import com.levi.demo_park_api.web.dto.ClienteCreateDto;
 import com.levi.demo_park_api.web.dto.ClienteResponseDto;
+import com.levi.demo_park_api.web.dto.PageableDto;
 import com.levi.demo_park_api.web.dto.UsuarioResponseDto;
 import com.levi.demo_park_api.web.dto.mapper.ClienteMapper;
+import com.levi.demo_park_api.web.dto.mapper.PageableMapper;
 import com.levi.demo_park_api.web.exception.ErrorMessage;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -80,8 +83,8 @@ public class ClienteController {
 
     @GetMapping()
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Page<Cliente>> getAll(Pageable pageable) {
-        Page<Cliente> cliente = clienteService.buscarTodos(pageable);
-        return ResponseEntity.ok(cliente);
+    public ResponseEntity<PageableDto> getAll(Pageable pageable) {
+        Page<ClienteProjection> clientes = clienteService.buscarTodos(pageable);
+        return ResponseEntity.ok(PageableMapper.toDto(clientes));
     }
 }
