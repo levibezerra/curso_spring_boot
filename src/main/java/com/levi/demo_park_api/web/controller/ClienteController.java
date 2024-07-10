@@ -59,7 +59,7 @@ public class ClienteController {
         return ResponseEntity.status(201).body(ClienteMapper.toDto(cliente));
     }
 
-    @Operation(summary = "Localizar um cliente", description = "Recurso para localizar um cliente pelo ID." +
+    @Operation(summary = "Localizar um cliente", description = "Recurso para localizar o cliente pelo ID." +
             "Requisição exige uso de um bearer token. Acesso restrito a Roles='ADMIN'",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Recurso localizado com sucesso",
