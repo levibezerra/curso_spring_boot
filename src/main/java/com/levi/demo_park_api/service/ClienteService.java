@@ -33,7 +33,7 @@ public class ClienteService {
     @Transactional(readOnly = true)
     public Cliente buscarPorId(Long id) {
         return clienteRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException(String.format("Cliente id=%s não encontrado no sistema", id))
+                () -> new EntityNotFoundException(String.format("Cliente com id=%s não encontrado no sistema", id))
         );
     }
 
