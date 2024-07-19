@@ -1,5 +1,4 @@
 package com.levi.demo_park_api.web.controller;
-
 import java.net.URI;
 import com.levi.demo_park_api.entity.Vaga;
 import com.levi.demo_park_api.service.VagaService;
@@ -33,7 +32,7 @@ public class VagaController {
         return ResponseEntity.created(location).build();
     }
 
-    @PostMapping("/{codigo}")
+    @GetMapping("/{codigo}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<VagaResponseDto> getByCodigo(@PathVariable String codigo) {
         Vaga vaga = vagaService.buscarPorCodigo(codigo);
