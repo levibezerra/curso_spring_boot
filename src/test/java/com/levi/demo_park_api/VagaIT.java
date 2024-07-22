@@ -89,4 +89,18 @@ public class VagaIT {
                 .jsonPath("codigo").isEqualTo("A-01")
                 .jsonPath("status").isEqualTo("LIVRE");
     }
+
+    @Test
+    public void buscarVaga_ComCodigoInexistente_RetornarErrorMessageComStatus404() {
+        testClient
+                .get()
+                .uri("/api/v1/vagas/{codigo}", "A-10")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "ana@email.com", "123456"))
+                .exchange()
+                .expectStatus().isNotFound()
+                .expectBody()
+                .jsonPath("status").isEqualTo(404)
+                .jsonPath("method").isEqualTo("GET")
+                .jsonPath("path").isEqualTo("/api/v1/vagas/A-10");
+    }
 }
