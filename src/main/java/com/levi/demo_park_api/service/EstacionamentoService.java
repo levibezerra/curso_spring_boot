@@ -36,6 +36,7 @@ public class EstacionamentoService {
         return clienteVagaService.salvar(clienteVaga);
     }
 
+    @Transactional
     public ClienteVaga checkOut(String recibo) {
         ClienteVaga clienteVaga = clienteVagaService.buscarPorRecibo(recibo);
 
