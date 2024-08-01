@@ -8,6 +8,8 @@ import com.levi.demo_park_api.web.dto.EstacionamentoResponseDto;
 import com.levi.demo_park_api.web.dto.mapper.ClienteVagaMapper;
 import com.levi.demo_park_api.web.exception.ErrorMessage;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -76,7 +78,26 @@ public class EstacionamentoController {
         return ResponseEntity.ok(dto);
     }
 
-    @PutMapping("/check-in/{recibo}")
+    @Operation(summary = "Operação de check-out", description = "Recurso para dar saída de um veículo do estacionamento. " +
+            "Requisição exige uso de um bearer token. Acesso restrito a Role='ADMIN'",
+            security = @SecurityRequirement(name = "security"),
+            parameters = { @Parameter(in = ParameterIn.PATH, name = "recibo", description = "Número do rebibo gerado pelo check-in",
+                    required = true)
+            },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Recurso atualzado com sucesso",
+                            content = @Content(mediaType = " application/json;charset=UTF-8",
+                                    schema = @Schema(implementation = EstacionamentoResponseDto.class))),
+                    @ApiResponse(responseCode = "404", description = "Número do recibo inexistente ou " +
+                            "o veículo já passou pelo check-out.",
+                            content = @Content(mediaType = " application/json;charset=UTF-8",
+                                    schema = @Schema(implementation = ErrorMessage.class))),
+                    @ApiResponse(responseCode = "403", description = "Recurso não permito ao perfil de CLIENTE",
+                            content = @Content(mediaType = " application/json;charset=UTF-8",
+                                    schema = @Schema(implementation = ErrorMessage.class)))
+            })
+
+    @PutMapping("/check-out/{recibo}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<EstacionamentoResponseDto> checkout(@PathVariable String recibo) {
         ClienteVaga clienteVaga = estacionamentoService.checkOut(recibo);
