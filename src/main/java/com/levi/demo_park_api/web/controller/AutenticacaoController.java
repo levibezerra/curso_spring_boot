@@ -15,6 +15,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -46,14 +47,17 @@ public class AutenticacaoController {
             }
     )
 
-    @PostMapping("/auth")
+    @PostMapping(path = "/auth", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> autenticar(@RequestBody @Valid UsuarioLoginDto dto, HttpServletRequest request) {
         log.info("Processo de autenticação pelo login {}", dto.getUsername());
         try {
             UsernamePasswordAuthenticationToken authenticationToken =
                     new UsernamePasswordAuthenticationToken(dto.getUsername(), dto.getPassword());
+
             authenticationManager.authenticate(authenticationToken);
+
             JwtToken token = detailsService.getTokenAuthenticated(dto.getUsername());
+
             return ResponseEntity.ok(token);
         }catch (AuthenticationException ex) {
             log.warn("Bad Credentials from username '{}'", dto.getUsername());

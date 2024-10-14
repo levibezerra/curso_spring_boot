@@ -13,11 +13,10 @@ import org.springframework.stereotype.Service;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-
-import java.io.InputStream;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -34,7 +33,7 @@ public class JasperService {
 
     public void addParams(String key, Object value) {
         this.params.put("IMAGEM_DIRETORIO", JASPER_DIRETORIO);
-        this.params.put("REPPRT_LOCALE", new Locale("pt", "BR"));
+        this.params.put("REPORT_LOCALE", new Locale("pt", "BR"));
         this.params.put(key, value);
     }
 

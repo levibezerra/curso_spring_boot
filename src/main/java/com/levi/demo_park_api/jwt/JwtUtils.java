@@ -12,6 +12,7 @@ import java.security.Key;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.Objects;
 
 @Slf4j
 
@@ -19,7 +20,7 @@ public class JwtUtils {
 
     public static final String JWT_BEARER = "Bearer ";
     public static final String JWT_AUTHORIZATION = "Authorization";
-    public static final String SECRET_KEY = "0123456789-0123456789-01234546789";
+    public static final String SECRET_KEY = "0123456789-0123456789-0123456789";
     public static final long EXPIRE_DAYS = 0;
     public static final long EXPIRE_HOURS = 0;
     public static final long EXPIRE_MINUTES = 30;
@@ -66,7 +67,7 @@ public class JwtUtils {
      }
 
      public static String getUsernameFromToken(String token) {
-        return getClaimsFromToken(token).getSubject();
+        return Objects.requireNonNull(getClaimsFromToken(token)).getSubject();
      }
 
      public static boolean isTokenValid(String token) {

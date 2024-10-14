@@ -15,7 +15,6 @@ import com.levi.demo_park_api.web.dto.PageableDto;
 import com.levi.demo_park_api.web.exception.ErrorMessage;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -40,6 +39,9 @@ import org.springframework.http.HttpHeaders;
 
 import java.io.IOException;
 import java.net.URI;
+
+import static io.swagger.v3.oas.annotations.enums.ParameterIn.PATH;
+import static io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY;
 
 @Tag(name = "Estacionamentos", description = "Operações de registro de entrada e saída de um veículo do estacionamento")
 @RequiredArgsConstructor
@@ -91,7 +93,7 @@ public class EstacionamentoController {
             "pelo nº do recibo. Requisição exige uso de um bearer token.",
             security = @SecurityRequirement(name = "security"),
             parameters = {
-                    @Parameter(in = ParameterIn.PATH, name = "recibo", description = "Número do recibo gerado pelo check-in")
+                    @Parameter(in = PATH, name = "recibo", description = "Número do recibo gerado pelo check-in")
             },
             responses = {
                     @ApiResponse(responseCode = "200", description = "Recurso localizado com sucesso",
@@ -113,7 +115,7 @@ public class EstacionamentoController {
     @Operation(summary = "Operação de check-out", description = "Recurso para dar saída de um veículo do estacionamento. " +
             "Requisição exige uso de um bearer token. Acesso restrito a Role='ADMIN'",
             security = @SecurityRequirement(name = "security"),
-            parameters = { @Parameter(in = ParameterIn.PATH, name = "recibo", description = "Número do rebibo gerado pelo check-in",
+            parameters = { @Parameter(in = PATH, name = "recibo", description = "Número do rebibo gerado pelo check-in",
                     required = true)
             },
             responses = {
@@ -141,16 +143,16 @@ public class EstacionamentoController {
             "registros de estacionamentos do cliente por CPF. Requisição exige uso de um bearer token.",
             security = @SecurityRequirement(name = "security"),
             parameters = {
-                    @Parameter(in = ParameterIn.PATH, name = "cpf", description = "Nº do CPF referente ao cliente a ser consultado",
+                    @Parameter(in = PATH, name = "cpf", description = "Nº do CPF referente ao cliente a ser consultado",
                             required = true
                     ),
-                    @Parameter(in = ParameterIn.QUERY, name = "page", description = "Representa a página retornada",
+                    @Parameter(in = QUERY, name = "page", description = "Representa a página retornada",
                             content = @Content(schema = @Schema(type = "integer", defaultValue = "0"))
                     ),
-                    @Parameter(in = ParameterIn.QUERY, name = "size", description = "Representa o total de elementos por página",
+                    @Parameter(in = QUERY, name = "size", description = "Representa o total de elementos por página",
                             content = @Content(schema = @Schema(type = "integer", defaultValue = "5"))
                     ),
-                    @Parameter(in = ParameterIn.QUERY, name = "sort", description = "Campo padrão de ordenação 'dataEntrada,asc'. ",
+                    @Parameter(in = QUERY, name = "sort", description = "Campo padrão de ordenação 'dataEntrada,asc'. ",
                             array = @ArraySchema(schema = @Schema(type = "string", defaultValue = "dataEntrada,asc")),
                             hidden = true
                     )
@@ -179,15 +181,15 @@ public class EstacionamentoController {
                     "Requisição exige uso de um bearer token.",
             security = @SecurityRequirement(name = "security"),
             parameters = {
-                    @Parameter(in = ParameterIn.QUERY, name = "page",
+                    @Parameter(in = QUERY, name = "page",
                             content = @Content(schema = @Schema(type = "integer", defaultValue = "0")),
                             description = "Representa a página retornada"
                     ),
-                    @Parameter(in = ParameterIn.QUERY, name = "size",
+                    @Parameter(in = QUERY, name = "size",
                             content = @Content(schema = @Schema(type = "integer", defaultValue = "5")),
                             description = "Representa o total de elementos por página"
                     ),
-                    @Parameter(in = ParameterIn.QUERY, name = "sort", hidden = true,
+                    @Parameter(in = QUERY, name = "sort", hidden = true,
                             array = @ArraySchema(schema = @Schema(type = "string", defaultValue = "dataEntrada,asc")),
                             description = "Campo padrão de ordenação 'dataEntrada,asc'. ")
             },
@@ -211,8 +213,21 @@ public class EstacionamentoController {
         return ResponseEntity.ok(dto);
     }
 
+    @Operation(summary = "Relatório em PDF com os estacionamentos do cliente",
+            description = "Recurso para gerar um relatório com os estacionamentos do cliente. " +
+                    "Requisição exige uso de um bearer token.",
+            security = @SecurityRequirement(name = "security"),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Relatório gerado com sucesso",
+                            content = @Content(mediaType = "application/pdf",
+                                    schema = @Schema(implementation = EstacionamentoResponseDto.class))),
+                    @ApiResponse(responseCode = "403", description = "Recurso não permito ao perfil de ADMIN",
+                            content = @Content(mediaType = " application/json;charset=UTF-8",
+                                    schema = @Schema(implementation = ErrorMessage.class)))
+            })
+
     @GetMapping("/relatorio")
-    @PreAuthorize("hasHole('CLIENTE')")
+    @PreAuthorize("hasRole('CLIENTE')")
     public ResponseEntity<Void> getRelatorio(HttpServletResponse response, @AuthenticationPrincipal JwtUserDetails user) throws IOException {
         String cpf = clienteService.buscarPorUsuarioId(user.getId()).getCpf();
         jasperService.addParams("CPF", cpf);
@@ -222,7 +237,6 @@ public class EstacionamentoController {
         response.setContentType(MediaType.APPLICATION_PDF_VALUE);
         response.setHeader("Content-disposition", "inline; filename=" + System.currentTimeMillis() + ".pdf");
         response.getOutputStream().write(bytes);
-
         return ResponseEntity.ok().build();
     }
 }
