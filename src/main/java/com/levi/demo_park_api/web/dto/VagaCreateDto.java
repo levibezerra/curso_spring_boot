@@ -12,11 +12,11 @@ import lombok.Setter;
 
 public class VagaCreateDto {
 
-    @NotBlank
-    @Size(min = 4, max = 4)
+    @NotBlank(message = "{NotBlank.VagaCreateDto.codigo}")
+    @Size(min = 4, max = 4, message = "{Size.vagaCreateDto.codigo}")
     private String codigo;
 
-    @NotBlank
-    @Pattern(regexp = "LIVRE|OCUPADA")
+    @NotBlank(message = "{NotBlank.VagaCreateDto.status}")
+    @Pattern(regexp = "LIVRE|OCUPADA", message = "Pattern.vagaCreateDto.status")
     private String status;
 }
