@@ -3,6 +3,7 @@ package com.levi.demo_park_api.service;
 import com.levi.demo_park_api.entity.Vaga;
 import com.levi.demo_park_api.exception.CodigoUniqueViolationException;
 import com.levi.demo_park_api.exception.EntityNotFoundException;
+import com.levi.demo_park_api.exception.VagaDisponivelException;
 import com.levi.demo_park_api.repository.VagaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -23,21 +24,19 @@ public class VagaService {
         try {
             return vagaRepository.save(vaga);
         } catch (DataIntegrityViolationException ex) {
-            throw new CodigoUniqueViolationException(
-                    String.format("Vaga com código '%s' já cadastrada", vaga.getCodigo()));
+            throw new CodigoUniqueViolationException("Vaga", vaga.getCodigo());
         }
     }
 
     @Transactional(readOnly = true)
     public Vaga buscarPorCodigo(String codigo) {
         return vagaRepository.findByCodigo(codigo).orElseThrow(
-                () -> new EntityNotFoundException(String.format("Vaga com código '%s' não foi encontrada", codigo))
-        );
+                () -> new EntityNotFoundException("Vaga", codigo));
     }
 
     public Vaga buscarPorVagaLivre() {
         return vagaRepository.findFirstByStatus(LIVRE).orElseThrow(
-                () -> new EntityNotFoundException("Nenhuma vaga livre foi encontrada")
+                () -> new VagaDisponivelException("Nenhuma vaga livre foi encontrada")
         );
     }
 }
